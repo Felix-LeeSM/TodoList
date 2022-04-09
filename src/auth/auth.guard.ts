@@ -16,7 +16,6 @@ export class authGuard implements CanActivate {
     const verified = this.authService.jwtVerification(accessToken);
     if (verified.message)
       throw new UnauthorizedException(`${verified.message}`);
-    console.log(verified);
     await this.authService.findUser(verified.userId);
     req.user = verified.userId;
     return true;

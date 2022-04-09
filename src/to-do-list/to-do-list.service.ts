@@ -18,7 +18,6 @@ export class ToDoListService {
   ) {}
 
   async createToDo(userId: string, createToDoListDto: CreateToDoListDto) {
-    console.log(createToDoListDto);
     const now = new Date();
     const lastTodo = await this.toDosRepository.findOne({
       where: { userId },
@@ -26,7 +25,6 @@ export class ToDoListService {
       order: { sequence: 'DESC' },
     });
 
-    console.log(lastTodo);
     const toDo = await this.toDosRepository.insert(
       this.toDosRepository.create({
         content: createToDoListDto.content,
@@ -42,7 +40,6 @@ export class ToDoListService {
   }
 
   async findAllToDo(userId: string) {
-    console.log(userId, typeof userId);
     const neo = await this.toDosRepository.find({
       where: {
         userId,
@@ -61,7 +58,6 @@ export class ToDoListService {
         sequence: 'ASC',
       },
     });
-    console.log(neo);
     return neo;
   }
 
@@ -202,7 +198,6 @@ export class ToDoListService {
       ]);
       [from, to] = [prep.sequence, next.sequence];
     } catch (err) {
-      console.log(err);
       throw new BadRequestException('Bad Request');
     }
     const queryRunner = this.connection.createQueryRunner();
