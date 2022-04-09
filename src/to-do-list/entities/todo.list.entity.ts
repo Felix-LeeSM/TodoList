@@ -28,10 +28,10 @@ export class ToDos {
   userId: string;
 
   @Column('varchar', {
-    name: 'text',
+    name: 'content',
     nullable: false,
   })
-  text: string;
+  content: string;
 
   @Column('tinyint', {
     name: 'isComplete',

@@ -10,7 +10,7 @@ import {
 export class CreateToDoListDto {
   @IsString()
   @IsNotEmpty()
-  text: string;
+  content: string;
 
   @IsOptional()
   @IsInt()

@@ -26,7 +26,7 @@ export class ToDoListService {
     ).sequence;
     const toDo = await this.toDosRepository.insert(
       this.toDosRepository.create({
-        text: createToDoListDto.text,
+        content: createToDoListDto.content,
         userId,
         deadline: createToDoListDto.deadline || now.setDate(now.getDate() + 7),
         category: createToDoListDto.category || 1,
@@ -42,7 +42,7 @@ export class ToDoListService {
       .select([
         'id',
         'userId',
-        'text',
+        'content',
         'isComplete',
         'category',
         'sequence',
@@ -72,14 +72,14 @@ export class ToDoListService {
     }
   }
 
-  async changeText(userId: string, id: number, text: string) {
+  async changeText(userId: string, id: number, content: string) {
     try {
       const toDo = await this.toDosRepository
         .createQueryBuilder()
         .select([
           'id',
           'userId',
-          'text',
+          'content',
           'isComplete',
           'category',
           'sequence',
@@ -90,7 +90,7 @@ export class ToDoListService {
         .andWhere('deletedAt IS NULL')
         .orderBy('sequence')
         .getOneOrFail();
-      toDo.text = text;
+      toDo.content = content;
       const novelToDo = await this.toDosRepository.save(toDo);
       return novelToDo;
     } catch (err) {
@@ -105,7 +105,7 @@ export class ToDoListService {
         .select([
           'id',
           'userId',
-          'text',
+          'content',
           'isComplete',
           'category',
           'sequence',
@@ -131,7 +131,7 @@ export class ToDoListService {
         .select([
           'id',
           'userId',
-          'text',
+          'content',
           'isComplete',
           'category',
           'sequence',
@@ -152,21 +152,16 @@ export class ToDoListService {
 
   async changeSequence(userId: string, id: number, from: number, to: number) {
     try {
-      const toDo = await this.toDosRepository
-        .createQueryBuilder()
-        .select([
-          'id',
-          'userId',
-          'text',
-          'isComplete',
-          'category',
-          'sequence',
-          'deadline',
-        ])
-        .where('userId = :userId', { userId })
-        .andWhere('id = :id', { id })
-        .andWhere('deletedAt IS NULL')
-        .orderBy('sequence');
+      if (from < to) {
+        await this.toDosRepository
+          .createQueryBuilder()
+          .update()
+          .set({ sequence: () => 'sequence + 1' })
+          .where('sequence < :from', { from })
+          .andWhere('sequence > :to', { to })
+          .execute();
+      } else {
+      }
       throw new Error();
     } catch (err) {
       throw new BadRequestException('bad request');

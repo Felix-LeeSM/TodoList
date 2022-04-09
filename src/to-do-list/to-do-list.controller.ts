@@ -44,17 +44,17 @@ export class ToDoListController {
     return this.toDoListService.deleteOne(userId, id);
   }
 
-  @Patch('text/:id')
+  @Patch('content/:id')
   changeText(
     @Req() req,
     @Param('id', ParseIntPipe) id: number,
-    @Body('text') text: string,
+    @Body('content') content: string,
   ) {
     const userId = req.user;
-    if (!text) {
-      throw new BadRequestException('Empty text');
+    if (!content) {
+      throw new BadRequestException('Empty content');
     }
-    return this.toDoListService.changeText(userId, id, text);
+    return this.toDoListService.changeText(userId, id, content);
   }
 
   @Patch('deadline/:id')
