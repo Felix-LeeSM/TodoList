@@ -16,6 +16,7 @@ export class ToDoListService {
   ) {}
 
   async create(userId: string, createToDoListDto: CreateToDoListDto) {
+    console.log(createToDoListDto);
     const now = new Date();
     const lastTodo = await this.toDosRepository
       .createQueryBuilder()
