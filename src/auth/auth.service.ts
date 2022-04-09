@@ -57,7 +57,6 @@ export class AuthService {
         .createQueryBuilder('U')
         .where('U.id = :id', { id })
         .andWhere('U.deletedAt IS NOT NULL')
-        .printSql()
         .getOneOrFail();
     } catch {
       throw new UnauthorizedException('No Such User');
