@@ -53,6 +53,7 @@ export class AuthService {
 
   async findUser(id: string) {
     try {
+      console.log(id);
       return await this.usersRepository
         .createQueryBuilder()
         .where('id = :id', { id })
