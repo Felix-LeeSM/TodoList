@@ -11,15 +11,9 @@ import {
   Req,
   ParseIntPipe,
   BadRequestException,
-  ParseBoolPipe,
 } from '@nestjs/common';
 import { ToDoListService } from './to-do-list.service';
 import { CreateToDoListDto } from './dto/create-to-do-list.dto';
-
-// todolist dto 만들고
-// controller 제대로 설정하고
-// service 만들기
-// 로직 제대로 찾아봐야 함.
 
 @Controller('todo')
 @UseGuards(authGuard)
@@ -88,10 +82,9 @@ export class ToDoListController {
   changeSequence(
     @Req() req,
     @Param('id', ParseIntPipe) id: number,
-    @Body() body,
+    @Body('to', ParseIntPipe) to: number,
   ) {
     const userId = req.user;
-    const { from, to } = body;
-    return this.toDoListService.changeSequence(userId, id, from, to);
+    return this.toDoListService.changeSequence(userId, id, to);
   }
 }

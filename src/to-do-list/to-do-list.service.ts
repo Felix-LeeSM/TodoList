@@ -137,7 +137,6 @@ export class ToDoListService {
   }
 
   async completeOne(userId: string, id: number, isComplete: number) {
-    console.log(isComplete);
     try {
       const toDo = await this.toDosRepository.findOneOrFail({
         where: {
@@ -164,9 +163,35 @@ export class ToDoListService {
     }
   }
 
-  async changeSequence(userId: string, id: number, from: number, to: number) {
+  async changeSequence(userId: string, id: number, To: number) {
     try {
+      const [prep, next] = await Promise.all([
+        this.toDosRepository.findOne({
+          where: {
+            userId,
+            id,
+          },
+          select: ['sequence'],
+        }),
+        this.toDosRepository.findOne({
+          where: {
+            userId,
+            sequence: To,
+          },
+          select: ['sequence'],
+        }),
+      ]);
+      const [from, to] = [prep.sequence, next.sequence];
       if (from < to) {
+        await this.toDosRepository
+          .createQueryBuilder()
+          .update()
+          .set({ sequence: () => 'sequence - 1' })
+          .where('userId = :userId', { userId })
+          .andWhere('sequence > :from', { from })
+          .andWhere('sequence <= :to', { to })
+          .execute();
+      } else {
         await this.toDosRepository
           .createQueryBuilder()
           .update()
@@ -175,21 +200,15 @@ export class ToDoListService {
           .andWhere('sequence < :from', { from })
           .andWhere('sequence >= :to', { to })
           .execute();
-      } else {
-        await this.toDosRepository
-          .createQueryBuilder()
-          .update()
-          .set({ sequence: () => 'sequence - 1' })
-          .andWhere('sequence > :from', { from })
-          .andWhere('sequence <= :to', { to })
-          .execute();
       }
-      await this.toDosRepository
+      const result = await this.toDosRepository
         .createQueryBuilder()
         .update()
         .set({ sequence: to })
-        .where('');
-      throw new Error();
+        .where('userId = :userId')
+        .andWhere('sequence = :from', { from })
+        .execute();
+      return result;
     } catch (err) {
       throw new BadRequestException('bad request');
     }
