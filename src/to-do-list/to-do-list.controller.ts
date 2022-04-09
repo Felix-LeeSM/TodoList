@@ -80,7 +80,7 @@ export class ToDoListController {
   @Patch('order/:id')
   changeOrder(@Req() req, @Param('id', ParseIntPipe) id: number, @Body() body) {
     const userId = req.user;
-    const {} = body;
-    return this.toDoListService.changeOrder(userId, id);
+    const { from, to } = body;
+    return this.toDoListService.changeOrder(userId, id, from, to);
   }
 }

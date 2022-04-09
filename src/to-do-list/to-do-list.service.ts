@@ -16,12 +16,21 @@ export class ToDoListService {
   ) {}
   async create(userId: string, createToDoListDto: CreateToDoListDto) {
     const now = new Date();
+    const lastOrder = (
+      await this.toDosRepository
+        .createQueryBuilder()
+        .select('order')
+        .where('userId = :userId', { userId })
+        .orderBy('order', 'DESC')
+        .getOne()
+    ).order;
     const toDo = await this.toDosRepository.insert(
       this.toDosRepository.create({
         text: createToDoListDto.text,
         userId,
         deadline: createToDoListDto.deadline || now.setDate(now.getDate() + 7),
         category: createToDoListDto.category || 1,
+        order: lastOrder + 1,
       }),
     );
     return { toDo };
@@ -142,7 +151,7 @@ export class ToDoListService {
     }
   }
 
-  changeOrder(userId: string, id: number) {
+  changeOrder(userId: string, id: number, from: number, to: number) {
     try {
       throw new Error();
     } catch (err) {
