@@ -18,12 +18,11 @@ export class ToDoListService {
   async create(userId: string, createToDoListDto: CreateToDoListDto) {
     console.log(createToDoListDto);
     const now = new Date();
-    const lastTodo = await this.toDosRepository
-      .createQueryBuilder()
-      .select('sequence')
-      .where('userId = :userId', { userId })
-      .orderBy('sequence', 'DESC')
-      .getOne();
+    const lastTodo = await this.toDosRepository.findOne({
+      where: { userId },
+      select: ['sequence'],
+      order: { sequence: 'DESC' },
+    });
 
     console.log(lastTodo);
     const toDo = await this.toDosRepository.insert(
@@ -56,6 +55,9 @@ export class ToDoListService {
         'sequence',
         'deadline',
       ],
+      order: {
+        sequence: 'ASC',
+      },
     });
     console.log(neo);
     return neo;
@@ -63,13 +65,10 @@ export class ToDoListService {
 
   async deleteOne(userId: string, id: number) {
     try {
-      const toDo = await this.toDosRepository
-        .createQueryBuilder()
-        .select(['id'])
-        .where('userId = :userId', { userId })
-        .andWhere('id = :id', { id })
-        .andWhere('deletedAt IS NULL')
-        .getOneOrFail();
+      const toDo = await this.toDosRepository.findOneOrFail({
+        where: { userId, id },
+        select: ['id', 'deletedAt', 'sequence'],
+      });
       toDo.deletedAt = new Date();
       toDo.sequence = 0;
       const result = await this.toDosRepository.save(toDo);
@@ -81,9 +80,13 @@ export class ToDoListService {
 
   async changeText(userId: string, id: number, content: string) {
     try {
-      const toDo = await this.toDosRepository
-        .createQueryBuilder()
-        .select([
+      const toDo = await this.toDosRepository.findOneOrFail({
+        where: {
+          id,
+          userId,
+          deletedAt: null,
+        },
+        select: [
           'id',
           'userId',
           'content',
@@ -91,12 +94,8 @@ export class ToDoListService {
           'category',
           'sequence',
           'deadline',
-        ])
-        .where('userId = :userId', { userId })
-        .andWhere('id = :id', { id })
-        .andWhere('deletedAt IS NULL')
-        .orderBy('sequence')
-        .getOneOrFail();
+        ],
+      });
       toDo.content = content;
       const novelToDo = await this.toDosRepository.save(toDo);
       return novelToDo;
@@ -107,9 +106,13 @@ export class ToDoListService {
 
   async changeDeadline(userId: string, id: number, deadline: Date) {
     try {
-      const toDo = await this.toDosRepository
-        .createQueryBuilder()
-        .select([
+      const toDo = await this.toDosRepository.findOneOrFail({
+        where: {
+          id,
+          userId,
+          deletedAt: null,
+        },
+        select: [
           'id',
           'userId',
           'content',
@@ -117,12 +120,8 @@ export class ToDoListService {
           'category',
           'sequence',
           'deadline',
-        ])
-        .where('userId = :userId', { userId })
-        .andWhere('id = :id', { id })
-        .andWhere('deletedAt IS NULL')
-        .orderBy('sequence')
-        .getOneOrFail();
+        ],
+      });
       toDo.deadline = deadline;
       await this.toDosRepository.save(toDo);
       return toDo;
@@ -133,9 +132,13 @@ export class ToDoListService {
 
   async completeOne(userId: string, id: number) {
     try {
-      const toDo = await this.toDosRepository
-        .createQueryBuilder()
-        .select([
+      const toDo = await this.toDosRepository.findOneOrFail({
+        where: {
+          id,
+          userId,
+          deletedAt: null,
+        },
+        select: [
           'id',
           'userId',
           'content',
@@ -143,12 +146,8 @@ export class ToDoListService {
           'category',
           'sequence',
           'deadline',
-        ])
-        .where('userId = :userId', { userId })
-        .andWhere('id = :id', { id })
-        .andWhere('deletedAt IS NULL')
-        .orderBy('sequence')
-        .getOneOrFail();
+        ],
+      });
       toDo.isComplete = Math.abs(toDo.isComplete - 1);
       await this.toDosRepository.save(toDo);
       return toDo;
