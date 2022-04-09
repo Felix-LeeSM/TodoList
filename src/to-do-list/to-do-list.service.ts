@@ -48,9 +48,8 @@ export class ToDoListService {
         'order',
         'deadline',
       ])
-      .where('userId = :id', { id })
-      .andWhere('deletedAt IS NULL')
-      .orderBy('order')
+      .where('userId = :id AND deletedAt IS NULL', { id })
+      .orderBy('order', 'DESC')
       .getMany();
     return { toDos };
   }
