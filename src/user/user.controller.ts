@@ -23,6 +23,7 @@ export class UserController {
 
   @Post()
   create(@Body(ValidationPipe) createUserDto: CreateUserDto) {
+    console.log(createUserDto);
     return this.userService.create(createUserDto);
   }
 

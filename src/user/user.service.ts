@@ -50,11 +50,13 @@ export class UserService {
       .getOne();
     if (user) throw new UnauthorizedException('Duplicated Id');
     const hashed = await bcrypt.hash(password, '');
-
-    const novelUser = await this.usersRepository.save({
-      id,
-      password: hashed,
-    });
+    console.log(hashed);
+    const novelUser = await this.usersRepository.save(
+      this.usersRepository.create({
+        id,
+        password: hashed,
+      }),
+    );
     return this.login(novelUser);
   }
 
