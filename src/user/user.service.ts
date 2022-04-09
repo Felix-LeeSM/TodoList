@@ -6,7 +6,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
@@ -24,13 +23,8 @@ export class UserService {
     const { id, password } = loginDto;
     try {
       const user = await this.usersRepository.findOneOrFail({
-        where: { id },
-        select: ['password'],
+        where: { id, password },
       });
-      const match = await bcrypt.compare(password, user.password);
-      if (!match) {
-        throw new UnauthorizedException('Wrong Password');
-      }
       const accessToken = jwt.sign({ id }, this.MY_SECRET_KEY, {
         expiresIn: '24h',
       });
@@ -49,12 +43,10 @@ export class UserService {
       .andWhere('deletedAt != null')
       .getOne();
     if (user) throw new UnauthorizedException('Duplicated Id');
-    const hashed = await bcrypt.hash(password, '');
-    console.log(hashed);
     const novelUser = await this.usersRepository.save(
       this.usersRepository.create({
         id,
-        password: hashed,
+        password,
       }),
     );
     return this.login(novelUser);
