@@ -18,7 +18,7 @@ export class Users {
   id: string;
 
   @Column('varchar', {
-    name: 'isRead',
+    name: 'password',
     nullable: false,
     length: 50,
   })
