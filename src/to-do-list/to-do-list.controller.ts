@@ -11,6 +11,7 @@ import {
   Req,
   ParseIntPipe,
   BadRequestException,
+  ParseBoolPipe,
 } from '@nestjs/common';
 import { ToDoListService } from './to-do-list.service';
 import { CreateToDoListDto } from './dto/create-to-do-list.dto';
@@ -38,9 +39,9 @@ export class ToDoListController {
   }
 
   @Delete(':id')
-  deleteOne(@Req() req, @Param('id', ParseIntPipe) id: number) {
+  deleteOne(@Req() req, @Param('id', ParseBoolPipe) id: boolean) {
     const userId = req.user;
-    return this.toDoListService.deleteOne(userId, id);
+    return this.toDoListService.deleteOne(userId, +id);
   }
 
   @Patch('content/:id')
