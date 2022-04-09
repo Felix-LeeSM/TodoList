@@ -40,7 +40,7 @@ export class UserService {
       .createQueryBuilder()
       .select('password')
       .where('id = :id', { id })
-      .andWhere('deletedAt IS NOT NULL')
+      .andWhere('deletedAt IS NULL')
       .getOne();
     if (user) throw new UnauthorizedException('Duplicated Id');
     const novelUser = await this.usersRepository.save(

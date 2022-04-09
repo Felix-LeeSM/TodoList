@@ -56,7 +56,7 @@ export class AuthService {
       return await this.usersRepository
         .createQueryBuilder('U')
         .where('U.id = :id', { id })
-        .andWhere('U.deletedAt IS NOT NULL')
+        .andWhere('U.deletedAt IS NULL')
         .getOneOrFail();
     } catch {
       throw new UnauthorizedException('No Such User');
