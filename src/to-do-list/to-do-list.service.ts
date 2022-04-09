@@ -137,6 +137,7 @@ export class ToDoListService {
   }
 
   async completeOne(userId: string, id: number, isComplete: number) {
+    console.log(isComplete);
     try {
       const toDo = await this.toDosRepository.findOneOrFail({
         where: {
@@ -156,8 +157,8 @@ export class ToDoListService {
       });
       if (toDo.isComplete === isComplete) return toDo;
       toDo.isComplete = isComplete;
-      await this.toDosRepository.save(toDo);
-      return toDo;
+      const result = await this.toDosRepository.save(toDo);
+      return result;
     } catch (err) {
       throw new BadRequestException('Bad Request');
     }
