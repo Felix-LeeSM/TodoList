@@ -45,7 +45,7 @@ export class AuthService {
       if (err) {
         verified.message = err.message;
       } else {
-        verified.userId = decoded.sub as string;
+        verified.userId = decoded.id as string;
       }
     });
     return verified;
