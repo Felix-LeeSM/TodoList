@@ -39,9 +39,9 @@ export class ToDoListController {
   }
 
   @Delete(':id')
-  deleteOne(@Req() req, @Param('id', ParseBoolPipe) id: boolean) {
+  deleteOne(@Req() req, @Param('id', ParseIntPipe) id: number) {
     const userId = req.user;
-    return this.toDoListService.deleteOne(userId, +id);
+    return this.toDoListService.deleteOne(userId, id);
   }
 
   @Patch('content/:id')
@@ -75,10 +75,10 @@ export class ToDoListController {
   completeOne(
     @Req() req,
     @Param('id', ParseIntPipe) id: number,
-    @Body('isComplete', ParseIntPipe) isComplete,
+    @Body('isComplete', ParseBoolPipe) isComplete: boolean,
   ) {
     const userId = req.user;
-    return this.toDoListService.completeOne(userId, id, isComplete);
+    return this.toDoListService.completeOne(userId, id, +isComplete);
   }
 
   @Patch('sequence/:id')
