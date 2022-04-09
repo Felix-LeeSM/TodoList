@@ -69,7 +69,7 @@ export class ToDoListService {
         where: { userId, id },
         select: ['id', 'deletedAt', 'sequence'],
       });
-      const result = await this.toDosRepository.save(toDo);
+
       await this.toDosRepository
         .createQueryBuilder()
         .update()
@@ -77,6 +77,7 @@ export class ToDoListService {
         .where('sequence > :sequence', { sequence: toDo.sequence });
       toDo.deletedAt = new Date();
       toDo.sequence = 0;
+      const result = await this.toDosRepository.save(toDo);
       return result;
     } catch (err) {
       throw new ForbiddenException('Not Your Todo');
@@ -153,6 +154,7 @@ export class ToDoListService {
           'deadline',
         ],
       });
+      if (toDo.isComplete === isComplete) return toDo;
       toDo.isComplete = isComplete;
       await this.toDosRepository.save(toDo);
       return toDo;
@@ -168,7 +170,7 @@ export class ToDoListService {
           .createQueryBuilder()
           .update()
           .set({ sequence: () => 'sequence + 1' })
-          .where('')
+          .where('userId = :userId', { userId })
           .andWhere('sequence < :from', { from })
           .andWhere('sequence >= :to', { to })
           .execute();
