@@ -75,8 +75,11 @@ export class ToDoListController {
   completeOne(
     @Req() req,
     @Param('id', ParseIntPipe) id: number,
-    @Body('isComplete', ParseBoolPipe) isComplete: boolean,
+    @Body('isComplete') isComplete: boolean,
   ) {
+    if (typeof isComplete !== 'boolean') {
+      throw new BadRequestException('Boolean is expected');
+    }
     const userId = req.user;
     return this.toDoListService.completeOne(userId, id, +isComplete);
   }
