@@ -41,6 +41,7 @@ export class ToDoListService {
   }
 
   async findAll(userId: string) {
+    console.log(userId, typeof userId);
     const toDos = await this.toDosRepository
       .createQueryBuilder()
       .select([
