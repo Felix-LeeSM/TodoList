@@ -29,7 +29,9 @@ export class ToDoListService {
       this.toDosRepository.create({
         content: createToDoListDto.content,
         userId,
-        deadline: createToDoListDto.deadline || now.setDate(now.getDate() + 7),
+        deadline:
+          createToDoListDto.deadline ||
+          new Date(now.setDate(now.getDate() + 7)),
         category: createToDoListDto.category || 1,
         sequence: lastTodo ? lastTodo.sequence + 1 : 1,
       }),
