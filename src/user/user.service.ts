@@ -49,9 +49,7 @@ export class UserService {
       .andWhere('deletedAt != null')
       .getOne();
     if (user) throw new UnauthorizedException('Duplicated Id');
-
-    const salt = await bcrypt.genSalt(10);
-    const hashed = await bcrypt.hash(password, salt);
+    const hashed = await bcrypt.hash(password, '');
 
     const novelUser = await this.usersRepository.save({
       id,
