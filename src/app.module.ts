@@ -29,7 +29,6 @@ import { AuthModule } from './auth/auth.module';
           database: configService.get('DB_DATABASE'),
           entities: [Users, ToDos],
           logging: true,
-          synchronize: true,
         };
       },
     }),

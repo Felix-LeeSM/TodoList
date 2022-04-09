@@ -16,7 +16,7 @@ export class ToDoListService {
   ) {}
   async create(userId: string, createToDoListDto: CreateToDoListDto) {
     const now = new Date();
-    const lastOrder = (
+    const lastSequence = (
       await this.toDosRepository
         .createQueryBuilder()
         .select('sequence')
@@ -30,10 +30,10 @@ export class ToDoListService {
         userId,
         deadline: createToDoListDto.deadline || now.setDate(now.getDate() + 7),
         category: createToDoListDto.category || 1,
-        sequence: lastOrder + 1,
+        sequence: lastSequence + 1,
       }),
     );
-    return { toDo };
+    return toDo;
   }
 
   async findAll(userId: string) {
@@ -49,9 +49,9 @@ export class ToDoListService {
         'deadline',
       ])
       .where('userId = :userId AND deletedAt IS NULL', { userId })
-      .orderBy('sequence', 'DESC')
+      .orderBy('sequence')
       .getMany();
-    return { toDos };
+    return toDos;
   }
 
   async deleteOne(userId: string, id: number) {
@@ -66,7 +66,7 @@ export class ToDoListService {
       toDo.deletedAt = new Date();
       toDo.sequence = 0;
       const result = await this.toDosRepository.save(toDo);
-      return { result };
+      return result;
     } catch (err) {
       throw new ForbiddenException('Not Your Todo');
     }
@@ -92,7 +92,7 @@ export class ToDoListService {
         .getOneOrFail();
       toDo.text = text;
       const novelToDo = await this.toDosRepository.save(toDo);
-      return { toDo: novelToDo };
+      return novelToDo;
     } catch (err) {
       throw new BadRequestException('Bad Request');
     }
@@ -118,7 +118,7 @@ export class ToDoListService {
         .getOneOrFail();
       toDo.deadline = deadline;
       await this.toDosRepository.save(toDo);
-      return { toDo };
+      return toDo;
     } catch (err) {
       throw new BadRequestException('Bad Request');
     }
@@ -144,14 +144,29 @@ export class ToDoListService {
         .getOneOrFail();
       toDo.isComplete = Math.abs(toDo.isComplete - 1);
       await this.toDosRepository.save(toDo);
-      return { toDo };
+      return toDo;
     } catch (err) {
       throw new BadRequestException('Bad Request');
     }
   }
 
-  changeSequence(userId: string, id: number, from: number, to: number) {
+  async changeSequence(userId: string, id: number, from: number, to: number) {
     try {
+      const toDo = await this.toDosRepository
+        .createQueryBuilder()
+        .select([
+          'id',
+          'userId',
+          'text',
+          'isComplete',
+          'category',
+          'sequence',
+          'deadline',
+        ])
+        .where('userId = :userId', { userId })
+        .andWhere('id = :id', { id })
+        .andWhere('deletedAt IS NULL')
+        .orderBy('sequence');
       throw new Error();
     } catch (err) {
       throw new BadRequestException('bad request');
