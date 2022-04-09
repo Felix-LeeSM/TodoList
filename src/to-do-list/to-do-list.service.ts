@@ -14,23 +14,23 @@ export class ToDoListService {
     @InjectRepository(ToDos)
     private readonly toDosRepository: Repository<ToDos>,
   ) {}
+
   async create(userId: string, createToDoListDto: CreateToDoListDto) {
     const now = new Date();
-    const lastSequence = (
-      await this.toDosRepository
-        .createQueryBuilder()
-        .select('sequence')
-        .where('userId = :userId', { userId })
-        .orderBy('sequence', 'DESC')
-        .getOne()
-    ).sequence;
+    const lastTodo = await this.toDosRepository
+      .createQueryBuilder()
+      .select('sequence')
+      .where('userId = :userId', { userId })
+      .orderBy('sequence', 'DESC')
+      .getOne();
+
     const toDo = await this.toDosRepository.insert(
       this.toDosRepository.create({
         content: createToDoListDto.content,
         userId,
         deadline: createToDoListDto.deadline || now.setDate(now.getDate() + 7),
         category: createToDoListDto.category || 1,
-        sequence: lastSequence + 1,
+        sequence: lastTodo ? lastTodo.sequence + 1 : 1,
       }),
     );
     return toDo;
@@ -161,6 +161,13 @@ export class ToDoListService {
           .andWhere('sequence > :to', { to })
           .execute();
       } else {
+        await this.toDosRepository
+          .createQueryBuilder()
+          .update()
+          .set({ sequence: () => 'sequence - 1' })
+          .where('sequence > :from', { from })
+          .andWhere('sequence < :to', { to })
+          .execute();
       }
       throw new Error();
     } catch (err) {
