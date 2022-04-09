@@ -14,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { ToDoListService } from './to-do-list.service';
 import { CreateToDoListDto } from './dto/create-to-do-list.dto';
-import { UpdateToDoListDto } from './dto/update-to-do-list.dto';
 
 // todolist dto 만들고
 // controller 제대로 설정하고
@@ -27,15 +26,15 @@ export class ToDoListController {
   constructor(private readonly toDoListService: ToDoListService) {}
 
   @Post()
-  create(@Req() req, @Body() createToDoListDto: CreateToDoListDto) {
+  createToDo(@Req() req, @Body() createToDoListDto: CreateToDoListDto) {
     const userId = req.user;
-    return this.toDoListService.create(userId, createToDoListDto);
+    return this.toDoListService.createToDo(userId, createToDoListDto);
   }
 
   @Get()
-  findAll(@Req() req) {
+  findAllToDo(@Req() req) {
     const userId = req.user;
-    return this.toDoListService.findAll(userId);
+    return this.toDoListService.findAllToDo(userId);
   }
 
   @Delete(':id')
@@ -45,7 +44,7 @@ export class ToDoListController {
   }
 
   @Patch('content/:id')
-  changeText(
+  changeContent(
     @Req() req,
     @Param('id', ParseIntPipe) id: number,
     @Body('content') content: string,
@@ -54,7 +53,7 @@ export class ToDoListController {
     if (!content) {
       throw new BadRequestException('Empty content');
     }
-    return this.toDoListService.changeText(userId, id, content);
+    return this.toDoListService.changeContent(userId, id, content);
   }
 
   @Patch('deadline/:id')
@@ -72,9 +71,13 @@ export class ToDoListController {
   }
 
   @Patch('complete/:id')
-  completeOne(@Req() req, @Param('id', ParseIntPipe) id: number) {
+  completeOne(
+    @Req() req,
+    @Param('id', ParseIntPipe) id: number,
+    @Body('isComplete', ParseIntPipe) isComplete,
+  ) {
     const userId = req.user;
-    return this.toDoListService.completeOne(userId, id);
+    return this.toDoListService.completeOne(userId, id, isComplete);
   }
 
   @Patch('sequence/:id')

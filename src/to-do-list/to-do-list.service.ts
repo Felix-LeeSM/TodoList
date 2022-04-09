@@ -15,7 +15,7 @@ export class ToDoListService {
     private readonly toDosRepository: Repository<ToDos>,
   ) {}
 
-  async create(userId: string, createToDoListDto: CreateToDoListDto) {
+  async createToDo(userId: string, createToDoListDto: CreateToDoListDto) {
     console.log(createToDoListDto);
     const now = new Date();
     const lastTodo = await this.toDosRepository.findOne({
@@ -39,7 +39,7 @@ export class ToDoListService {
     return toDo;
   }
 
-  async findAll(userId: string) {
+  async findAllToDo(userId: string) {
     console.log(userId, typeof userId);
     const neo = await this.toDosRepository.find({
       where: {
@@ -69,16 +69,21 @@ export class ToDoListService {
         where: { userId, id },
         select: ['id', 'deletedAt', 'sequence'],
       });
+      const result = await this.toDosRepository.save(toDo);
+      await this.toDosRepository
+        .createQueryBuilder()
+        .update()
+        .set({ sequence: () => 'sequence - 1' })
+        .where('sequence > :sequence', { sequence: toDo.sequence });
       toDo.deletedAt = new Date();
       toDo.sequence = 0;
-      const result = await this.toDosRepository.save(toDo);
       return result;
     } catch (err) {
       throw new ForbiddenException('Not Your Todo');
     }
   }
 
-  async changeText(userId: string, id: number, content: string) {
+  async changeContent(userId: string, id: number, content: string) {
     try {
       const toDo = await this.toDosRepository.findOneOrFail({
         where: {
@@ -130,7 +135,7 @@ export class ToDoListService {
     }
   }
 
-  async completeOne(userId: string, id: number) {
+  async completeOne(userId: string, id: number, isComplete: number) {
     try {
       const toDo = await this.toDosRepository.findOneOrFail({
         where: {
@@ -148,7 +153,7 @@ export class ToDoListService {
           'deadline',
         ],
       });
-      toDo.isComplete = Math.abs(toDo.isComplete - 1);
+      toDo.isComplete = isComplete;
       await this.toDosRepository.save(toDo);
       return toDo;
     } catch (err) {
