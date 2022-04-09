@@ -52,7 +52,8 @@ export class ToDoListService {
         'sequence',
         'deadline',
       ])
-      .where('userId = :userId AND deletedAt IS NULL', { userId })
+      .where('userId = :userId', { userId })
+      .andWhere('deletedAt IS NULL')
       .orderBy('sequence')
       .getMany();
     console.log(toDos);
