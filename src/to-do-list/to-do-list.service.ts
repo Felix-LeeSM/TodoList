@@ -49,7 +49,7 @@ export class ToDoListService {
         'deadline',
       ])
       .where('userId = :id', { id })
-      .andWhere('deletedAt != null')
+      .andWhere('deletedAt != :null', { null: null })
       .orderBy('order')
       .getMany();
     return { toDos };
@@ -62,7 +62,7 @@ export class ToDoListService {
         .select(['id'])
         .where('userId = :userId', { userId })
         .andWhere('id = :id', { id })
-        .andWhere('deletedAt != null')
+        .andWhere('deletedAt != :null', { null: null })
         .getOneOrFail();
       toDo.deletedAt = new Date();
       toDo.order = 0;
@@ -88,7 +88,7 @@ export class ToDoListService {
         ])
         .where('userId = :userId', { userId })
         .andWhere('id = :id', { id })
-        .andWhere('deletedAt != null')
+        .andWhere('deletedAt != :null', { null: null })
         .orderBy('order')
         .getOneOrFail();
       toDo.text = text;
@@ -114,7 +114,7 @@ export class ToDoListService {
         ])
         .where('userId = :userId', { userId })
         .andWhere('id = :id', { id })
-        .andWhere('deletedAt != null')
+        .andWhere('deletedAt != :null', { null: null })
         .orderBy('order')
         .getOneOrFail();
       toDo.deadline = deadline;
@@ -140,7 +140,7 @@ export class ToDoListService {
         ])
         .where('userId = :userId', { userId })
         .andWhere('id = :id', { id })
-        .andWhere('deletedAt != null')
+        .andWhere('deletedAt != :null', { null: null })
         .orderBy('order')
         .getOneOrFail();
       toDo.isComplete = Math.abs(toDo.isComplete - 1);
