@@ -28,6 +28,7 @@ export class AuthService {
   } {
     const req = context.getArgByIndex(0);
     const headers: string[] = req.rawHeaders;
+    console.log(headers);
     const authorization = headers.indexOf('authorization');
     const accessToken = authorization !== -1 ? headers[authorization + 1] : '';
     return {
