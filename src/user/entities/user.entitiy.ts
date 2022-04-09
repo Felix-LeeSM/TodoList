@@ -24,12 +24,6 @@ export class Users {
   })
   password: string;
 
-  @Column('timestamp', {
-    name: 'deadline',
-    nullable: false,
-  })
-  deadline: Date;
-
   @CreateDateColumn({
     name: 'createdAt',
   })
