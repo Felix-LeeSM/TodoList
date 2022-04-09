@@ -25,6 +25,7 @@ export class ToDoListService {
       .orderBy('sequence', 'DESC')
       .getOne();
 
+    console.log(lastTodo);
     const toDo = await this.toDosRepository.insert(
       this.toDosRepository.create({
         content: createToDoListDto.content,
@@ -54,6 +55,7 @@ export class ToDoListService {
       .where('userId = :userId AND deletedAt IS NULL', { userId })
       .orderBy('sequence')
       .getMany();
+    console.log(toDos);
     return toDos;
   }
 
@@ -160,18 +162,24 @@ export class ToDoListService {
           .createQueryBuilder()
           .update()
           .set({ sequence: () => 'sequence + 1' })
-          .where('sequence < :from', { from })
-          .andWhere('sequence > :to', { to })
+          .where('')
+          .andWhere('sequence < :from', { from })
+          .andWhere('sequence >= :to', { to })
           .execute();
       } else {
         await this.toDosRepository
           .createQueryBuilder()
           .update()
           .set({ sequence: () => 'sequence - 1' })
-          .where('sequence > :from', { from })
-          .andWhere('sequence < :to', { to })
+          .andWhere('sequence > :from', { from })
+          .andWhere('sequence <= :to', { to })
           .execute();
       }
+      await this.toDosRepository
+        .createQueryBuilder()
+        .update()
+        .set({ sequence: to })
+        .where('');
       throw new Error();
     } catch (err) {
       throw new BadRequestException('bad request');
