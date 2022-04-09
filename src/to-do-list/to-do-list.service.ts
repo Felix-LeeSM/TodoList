@@ -19,24 +19,24 @@ export class ToDoListService {
     const lastOrder = (
       await this.toDosRepository
         .createQueryBuilder()
-        .select('order')
+        .select('sequence')
         .where('userId = :userId', { userId })
-        .orderBy('order', 'DESC')
+        .orderBy('sequence', 'DESC')
         .getOne()
-    ).order;
+    ).sequence;
     const toDo = await this.toDosRepository.insert(
       this.toDosRepository.create({
         text: createToDoListDto.text,
         userId,
         deadline: createToDoListDto.deadline || now.setDate(now.getDate() + 7),
         category: createToDoListDto.category || 1,
-        order: lastOrder + 1,
+        sequence: lastOrder + 1,
       }),
     );
     return { toDo };
   }
 
-  async findAll(id: string) {
+  async findAll(userId: string) {
     const toDos = await this.toDosRepository
       .createQueryBuilder()
       .select([
@@ -45,11 +45,11 @@ export class ToDoListService {
         'text',
         'isComplete',
         'category',
-        'order',
+        'sequence',
         'deadline',
       ])
-      .where('userId = :id AND deletedAt IS NULL', { id })
-      .orderBy('order', 'DESC')
+      .where('userId = :userId AND deletedAt IS NULL', { userId })
+      .orderBy('sequence', 'DESC')
       .getMany();
     return { toDos };
   }
@@ -64,7 +64,7 @@ export class ToDoListService {
         .andWhere('deletedAt IS NULL')
         .getOneOrFail();
       toDo.deletedAt = new Date();
-      toDo.order = 0;
+      toDo.sequence = 0;
       const result = await this.toDosRepository.save(toDo);
       return { result };
     } catch (err) {
@@ -82,13 +82,13 @@ export class ToDoListService {
           'text',
           'isComplete',
           'category',
-          'order',
+          'sequence',
           'deadline',
         ])
         .where('userId = :userId', { userId })
         .andWhere('id = :id', { id })
         .andWhere('deletedAt IS NULL')
-        .orderBy('order')
+        .orderBy('sequence')
         .getOneOrFail();
       toDo.text = text;
       const novelToDo = await this.toDosRepository.save(toDo);
@@ -108,13 +108,13 @@ export class ToDoListService {
           'text',
           'isComplete',
           'category',
-          'order',
+          'sequence',
           'deadline',
         ])
         .where('userId = :userId', { userId })
         .andWhere('id = :id', { id })
         .andWhere('deletedAt IS NULL')
-        .orderBy('order')
+        .orderBy('sequence')
         .getOneOrFail();
       toDo.deadline = deadline;
       await this.toDosRepository.save(toDo);
@@ -134,13 +134,13 @@ export class ToDoListService {
           'text',
           'isComplete',
           'category',
-          'order',
+          'sequence',
           'deadline',
         ])
         .where('userId = :userId', { userId })
         .andWhere('id = :id', { id })
         .andWhere('deletedAt IS NULL')
-        .orderBy('order')
+        .orderBy('sequence')
         .getOneOrFail();
       toDo.isComplete = Math.abs(toDo.isComplete - 1);
       await this.toDosRepository.save(toDo);
@@ -150,7 +150,7 @@ export class ToDoListService {
     }
   }
 
-  changeOrder(userId: string, id: number, from: number, to: number) {
+  changeSequence(userId: string, id: number, from: number, to: number) {
     try {
       throw new Error();
     } catch (err) {

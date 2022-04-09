@@ -77,10 +77,14 @@ export class ToDoListController {
     return this.toDoListService.completeOne(userId, id);
   }
 
-  @Patch('order/:id')
-  changeOrder(@Req() req, @Param('id', ParseIntPipe) id: number, @Body() body) {
+  @Patch('sequence/:id')
+  changeSequence(
+    @Req() req,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body,
+  ) {
     const userId = req.user;
     const { from, to } = body;
-    return this.toDoListService.changeOrder(userId, id, from, to);
+    return this.toDoListService.changeSequence(userId, id, from, to);
   }
 }

@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Index('id', ['id', 'order'])
+@Index('id', ['id', 'sequence'])
 @Entity()
 export class ToDos {
   @PrimaryGeneratedColumn({
@@ -49,10 +49,10 @@ export class ToDos {
   category: number;
 
   @Column('tinyint', {
-    name: 'order',
+    name: 'sequence',
     nullable: false,
   })
-  order: number;
+  sequence: number;
 
   @Column('timestamp', {
     name: 'deadline',
