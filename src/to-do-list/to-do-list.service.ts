@@ -42,9 +42,12 @@ export class ToDoListService {
 
   async findAll(userId: string) {
     console.log(userId, typeof userId);
-    const toDos = await this.toDosRepository
-      .createQueryBuilder()
-      .select([
+    const neo = await this.toDosRepository.find({
+      where: {
+        userId,
+        deletedAt: null,
+      },
+      select: [
         'id',
         'userId',
         'content',
@@ -52,13 +55,10 @@ export class ToDoListService {
         'category',
         'sequence',
         'deadline',
-      ])
-      .where('userId = :userId', { userId })
-      .andWhere('deletedAt IS NULL')
-      .orderBy('sequence')
-      .getMany();
-    console.log(toDos);
-    return toDos;
+      ],
+    });
+    console.log(neo);
+    return neo;
   }
 
   async deleteOne(userId: string, id: number) {
