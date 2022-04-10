@@ -8,6 +8,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from './user/entities/user.entitiy';
 import { ToDos } from './to-do-list/entities/todo.list.entity';
 import { AuthModule } from './auth/auth.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from './logging.interceptor';
 
 @Module({
   imports: [
@@ -34,6 +36,12 @@ import { AuthModule } from './auth/auth.module';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
 })
 export class AppModule {}
