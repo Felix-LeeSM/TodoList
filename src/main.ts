@@ -24,6 +24,7 @@ async function bootstrap() {
     .setDescription('ToDoList Description')
     .setVersion('1.0')
     .setDescription('ToDoList Server APIs')
+    .addTag('ToDos')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
