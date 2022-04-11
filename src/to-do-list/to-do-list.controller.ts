@@ -15,8 +15,19 @@ import {
 } from '@nestjs/common';
 import { ToDoListService } from './to-do-list.service';
 import { CreateToDoListDto } from './dto/create-to-do-list.dto';
-import { ApiHeader, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { PatchSequenceDto } from './dto/update-to-do-list.dto';
+import {
+  ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+  ApiBody,
+} from '@nestjs/swagger';
+import {
+  PatchSequenceDto,
+  PatchCompleteDto,
+  PatchDeadlineDto,
+  PatchContentDto,
+} from './dto/update-to-do-list.dto';
 
 @ApiTags('ToDoList APIs')
 @ApiHeader({
@@ -30,7 +41,13 @@ export class ToDoListController {
 
   @Post()
   @ApiOperation({ summary: 'ToDo 칸반 만들기' })
-  createToDo(@Req() req, @Body() createToDoListDto: CreateToDoListDto) {
+  @ApiBody({
+    type: CreateToDoListDto,
+  })
+  createToDo(
+    @Req() req,
+    @Body(ValidationPipe) createToDoListDto: CreateToDoListDto,
+  ) {
     const userId = req.user;
     return this.toDoListService.createToDo(userId, createToDoListDto);
   }
@@ -59,11 +76,15 @@ export class ToDoListController {
     name: 'id',
     description: '수정할 칸반 id',
   })
+  @ApiBody({
+    type: PatchContentDto,
+  })
   changeContent(
     @Req() req,
     @Param('id', ParseIntPipe) id: number,
-    @Body('content') content: string,
+    @Body(ValidationPipe) patchContentDto: PatchContentDto,
   ) {
+    const { content } = patchContentDto;
     const userId = req.user;
     if (!content) {
       throw new BadRequestException('Empty content');
@@ -77,11 +98,15 @@ export class ToDoListController {
     name: 'id',
     description: '수정할 칸반 id',
   })
+  @ApiBody({
+    type: PatchDeadlineDto,
+  })
   changeDeadline(
     @Req() req,
     @Param('id', ParseIntPipe) id: number,
-    @Body('deadline') deadline: Date,
+    @Body(ValidationPipe) patchDeadlineDto: PatchDeadlineDto,
   ) {
+    const { deadline } = patchDeadlineDto;
     try {
       const userId = req.user;
       return this.toDoListService.changeDeadline(userId, id, deadline);
@@ -96,11 +121,15 @@ export class ToDoListController {
     name: 'id',
     description: '수정할 칸반 id',
   })
+  @ApiBody({
+    type: PatchCompleteDto,
+  })
   completeOne(
     @Req() req,
     @Param('id', ParseIntPipe) id: number,
-    @Body('isComplete') isComplete: boolean,
+    @Body(ValidationPipe) patchCompleteDto: PatchCompleteDto,
   ) {
+    const { isComplete } = patchCompleteDto;
     if (typeof isComplete !== 'boolean') {
       throw new BadRequestException('Boolean is expected');
     }
@@ -113,6 +142,9 @@ export class ToDoListController {
   @ApiParam({
     name: 'id',
     description: '수정할 칸반 id',
+  })
+  @ApiBody({
+    type: PatchSequenceDto,
   })
   changeSequence(
     @Req() req,
