@@ -233,7 +233,7 @@ export class ToDoListService {
         .createQueryBuilder()
         .update()
         .set({ sequence: to })
-        .where('userId = :userId')
+        .where('userId = :userId', { userId })
         .andWhere('sequence = :from', { from })
         .execute();
       await queryRunner.commitTransaction();
