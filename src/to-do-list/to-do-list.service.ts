@@ -185,14 +185,14 @@ export class ToDoListService {
     try {
       prep = await this.toDosRepository.findOneOrFail({
         where: {
-          id: From,
+          sequence: From,
           userId,
         },
         select: ['id', 'sequence'],
       });
       next = await this.toDosRepository.findOneOrFail({
         where: {
-          id: To,
+          sequence: To,
           userId,
         },
         select: ['sequence'],
