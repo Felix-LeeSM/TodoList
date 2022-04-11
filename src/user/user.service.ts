@@ -10,7 +10,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository, UpdateResult } from 'typeorm';
-import md5 from 'md5';
+// import md5 from 'md5';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
@@ -36,7 +36,7 @@ export class UserService {
     } catch (err) {
       throw new UnauthorizedException('Wrong Id');
     }
-    if (md5(password) !== user.password)
+    if (password !== user.password)
       throw new UnauthorizedException('Wrong Password');
     const accessToken = jwt.sign({ id }, this.MY_SECRET_KEY, {
       expiresIn: '24h',
@@ -56,7 +56,7 @@ export class UserService {
     const novelUser = await this.usersRepository.save(
       this.usersRepository.create({
         id,
-        password: md5(password),
+        password,
       }),
     );
     return this.login(novelUser);

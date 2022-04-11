@@ -1,3 +1,4 @@
+import { ToDos } from './entities/todo.list.entity';
 import { authGuard } from './../auth/auth.guard';
 import {
   Controller,
@@ -21,6 +22,7 @@ import {
   ApiParam,
   ApiTags,
   ApiBody,
+  ApiCreatedResponse,
 } from '@nestjs/swagger';
 import {
   PatchSequenceDto,
@@ -43,6 +45,9 @@ export class ToDoListController {
   @ApiOperation({ summary: 'ToDo 칸반 만들기' })
   @ApiBody({
     type: CreateToDoListDto,
+  })
+  @ApiCreatedResponse({
+    type: ToDos,
   })
   createToDo(
     @Req() req,
