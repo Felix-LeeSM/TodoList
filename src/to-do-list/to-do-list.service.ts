@@ -183,20 +183,21 @@ export class ToDoListService {
       const [prep, next] = await Promise.all([
         this.toDosRepository.findOneOrFail({
           where: {
-            id: From,
+            sequence: From,
             userId,
           },
           select: ['sequence'],
         }),
         this.toDosRepository.findOneOrFail({
           where: {
-            id: To,
+            sequence: To,
             userId,
           },
           select: ['sequence'],
         }),
       ]);
       [from, to] = [prep.sequence, next.sequence];
+      if (from === to) return false;
     } catch (err) {
       throw new BadRequestException('Bad Request');
     }
@@ -204,9 +205,7 @@ export class ToDoListService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      if (from === to) {
-        return { affected: 0 };
-      } else if (from < to) {
+      if (from < to) {
         await queryRunner.manager
           .getRepository(ToDos)
           .createQueryBuilder()
