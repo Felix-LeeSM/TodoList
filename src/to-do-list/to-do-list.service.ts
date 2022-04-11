@@ -40,7 +40,7 @@ export class ToDoListService {
   }
 
   async findAllToDo(userId: string) {
-    const neo = await this.toDosRepository.find({
+    const ToDos = await this.toDosRepository.find({
       where: {
         userId,
         deletedAt: null,
@@ -58,7 +58,7 @@ export class ToDoListService {
         sequence: 'ASC',
       },
     });
-    return neo;
+    return ToDos;
   }
 
   async deleteOne(userId: string, id: number) {
@@ -82,6 +82,7 @@ export class ToDoListService {
         .update()
         .set({ sequence: () => 'sequence - 1' })
         .where('sequence > :sequence', { sequence: toDo.sequence })
+        .andWhere('deletedAt IS NULL')
         .execute();
       toDo.deletedAt = new Date();
       toDo.sequence = 0;
@@ -182,24 +183,22 @@ export class ToDoListService {
     let prep: ToDos;
     let next: ToDos;
     try {
-      [prep, next] = await Promise.all([
-        this.toDosRepository.findOneOrFail({
-          where: {
-            sequence: From,
-            userId,
-          },
-          select: ['id', 'sequence'],
-        }),
-        this.toDosRepository.findOneOrFail({
-          where: {
-            sequence: To,
-            userId,
-          },
-          select: ['sequence'],
-        }),
-      ]);
+      prep = await this.toDosRepository.findOneOrFail({
+        where: {
+          id: From,
+          userId,
+        },
+        select: ['id', 'sequence'],
+      });
+      next = await this.toDosRepository.findOneOrFail({
+        where: {
+          id: To,
+          userId,
+        },
+        select: ['sequence'],
+      });
       [from, to] = [prep.sequence, next.sequence];
-      if (from === to) return false;
+      if (from === to) return await this.findAllToDo(userId);
     } catch (err) {
       throw new BadRequestException('Bad Request');
     }
@@ -232,10 +231,9 @@ export class ToDoListService {
       }
       prep.sequence = to;
       await queryRunner.manager.getRepository(ToDos).save(prep);
-
       await queryRunner.commitTransaction();
       await queryRunner.release();
-      return true;
+      return await this.findAllToDo(userId);
     } catch (err) {
       await queryRunner.rollbackTransaction();
       await queryRunner.release();

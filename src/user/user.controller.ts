@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ApiOperation, ApiTags, ApiHeader, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiHeader } from '@nestjs/swagger';
 
 @ApiTags('User APIs')
 @Controller('user')
