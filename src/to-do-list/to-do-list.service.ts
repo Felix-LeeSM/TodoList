@@ -179,14 +179,16 @@ export class ToDoListService {
   async changeSequence(userId: string, From: number, To: number) {
     let from: number;
     let to: number;
+    let prep: ToDos;
+    let next: ToDos;
     try {
-      const [prep, next] = await Promise.all([
+      [prep, next] = await Promise.all([
         this.toDosRepository.findOneOrFail({
           where: {
             sequence: From,
             userId,
           },
-          select: ['sequence'],
+          select: ['id', 'sequence'],
         }),
         this.toDosRepository.findOneOrFail({
           where: {
@@ -228,14 +230,9 @@ export class ToDoListService {
           .andWhere('deletedAt IS NULL')
           .execute();
       }
-      await queryRunner.manager
-        .getRepository(ToDos)
-        .createQueryBuilder()
-        .update()
-        .set({ sequence: to })
-        .where('userId = :userId', { userId })
-        .andWhere('sequence = :from', { from })
-        .execute();
+      prep.sequence = to;
+      await queryRunner.manager.getRepository(ToDos).save(prep);
+
       await queryRunner.commitTransaction();
       await queryRunner.release();
       return true;
