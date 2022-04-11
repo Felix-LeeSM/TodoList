@@ -237,10 +237,10 @@ export class ToDoListService {
         .andWhere('sequence = :from', { from })
         .execute();
       await queryRunner.commitTransaction();
+      await queryRunner.release();
       return true;
     } catch (err) {
       await queryRunner.rollbackTransaction();
-    } finally {
       await queryRunner.release();
       throw new InternalServerErrorException('Please Try Again');
     }

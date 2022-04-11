@@ -173,6 +173,7 @@ export class ToDoListController {
   ) {
     const userId = req.user;
     const { from, to } = patchSequenceDto;
+    console.log(patchSequenceDto);
     return this.toDoListService.changeSequence(userId, from, to);
   }
 }
