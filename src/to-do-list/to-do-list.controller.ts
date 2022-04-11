@@ -23,6 +23,7 @@ import {
   ApiTags,
   ApiBody,
   ApiCreatedResponse,
+  ApiResponse,
 } from '@nestjs/swagger';
 import {
   PatchSequenceDto,
@@ -33,7 +34,7 @@ import {
 
 @ApiTags('ToDoList APIs')
 @ApiHeader({
-  name: 'authorization',
+  name: 'Authorization',
   description: 'accessToken',
 })
 @Controller('todo')
@@ -59,6 +60,9 @@ export class ToDoListController {
 
   @Get()
   @ApiOperation({ summary: 'ToDo 전체 목록 조회' })
+  @ApiResponse({
+    type: [ToDos],
+  })
   findAllToDo(@Req() req) {
     const userId = req.user;
     return this.toDoListService.findAllToDo(userId);
@@ -69,6 +73,9 @@ export class ToDoListController {
   @ApiParam({
     name: 'id',
     description: '삭제할 칸반 id',
+  })
+  @ApiResponse({
+    type: ToDos,
   })
   deleteOne(@Req() req, @Param('id', ParseIntPipe) id: number) {
     const userId = req.user;
@@ -83,6 +90,9 @@ export class ToDoListController {
   })
   @ApiBody({
     type: PatchContentDto,
+  })
+  @ApiResponse({
+    type: ToDos,
   })
   changeContent(
     @Req() req,
@@ -106,6 +116,9 @@ export class ToDoListController {
   @ApiBody({
     type: PatchDeadlineDto,
   })
+  @ApiResponse({
+    type: ToDos,
+  })
   changeDeadline(
     @Req() req,
     @Param('id', ParseIntPipe) id: number,
@@ -128,6 +141,9 @@ export class ToDoListController {
   })
   @ApiBody({
     type: PatchCompleteDto,
+  })
+  @ApiResponse({
+    type: ToDos,
   })
   completeOne(
     @Req() req,

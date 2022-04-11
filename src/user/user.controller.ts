@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ApiOperation, ApiTags, ApiHeader } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiHeader, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('User APIs')
 @Controller('user')
@@ -34,7 +34,7 @@ export class UserController {
   @Delete()
   @ApiOperation({ summary: '회원 탈퇴' })
   @ApiHeader({
-    name: 'authorization',
+    name: 'Authorization',
     description: 'accessToken',
   })
   withdrawal(@Req() req) {

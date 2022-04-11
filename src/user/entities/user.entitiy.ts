@@ -8,9 +8,15 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Users {
+  @ApiProperty({
+    name: 'id',
+    nullable: false,
+    type: 'string',
+  })
   @PrimaryColumn('varchar', {
     name: 'id',
     nullable: false,
