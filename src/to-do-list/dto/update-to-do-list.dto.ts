@@ -1,4 +1,11 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateToDoListDto } from './create-to-do-list.dto';
+import { IsInt, IsPositive } from 'class-validator';
 
-export class UpdateToDoListDto extends PartialType(CreateToDoListDto) {}
+export class PatchSequenceDto {
+  @IsInt()
+  @IsPositive()
+  from: number;
+
+  @IsInt()
+  @IsPositive()
+  to: number;
+}

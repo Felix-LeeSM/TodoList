@@ -176,22 +176,22 @@ export class ToDoListService {
     }
   }
 
-  async changeSequence(userId: string, id: number, To: number) {
+  async changeSequence(userId: string, From: number, To: number) {
     let from: number;
     let to: number;
     try {
       const [prep, next] = await Promise.all([
-        this.toDosRepository.findOne({
+        this.toDosRepository.findOneOrFail({
           where: {
+            id: From,
             userId,
-            id,
           },
           select: ['sequence'],
         }),
-        this.toDosRepository.findOne({
+        this.toDosRepository.findOneOrFail({
           where: {
+            id: To,
             userId,
-            sequence: To,
           },
           select: ['sequence'],
         }),
