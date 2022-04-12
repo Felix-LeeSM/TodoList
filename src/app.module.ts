@@ -30,7 +30,6 @@ import { LoggingInterceptor } from './logging.interceptor';
           password: configService.get('DB_PASSWORD'),
           database: configService.get('DB_DATABASE'),
           entities: [Users, ToDos],
-          logging: true,
         };
       },
     }),

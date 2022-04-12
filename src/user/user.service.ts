@@ -46,20 +46,25 @@ export class UserService {
 
   async register(createUserDto: CreateUserDto) {
     const { id, password } = createUserDto;
-    const user = await this.usersRepository
-      .createQueryBuilder()
-      .select('password')
-      .where('id = :id', { id })
-      .andWhere('deletedAt IS NULL')
-      .getOne();
-    if (user) throw new UnauthorizedException('Duplicated Id');
-    const novelUser = await this.usersRepository.save(
-      this.usersRepository.create({
-        id,
-        password: md5(password),
-      }),
-    );
-    return this.login(novelUser);
+    let isOk = true;
+    try {
+      await this.usersRepository
+        .createQueryBuilder()
+        .select('id')
+        .where('id = :id', { id })
+        .andWhere('deletedAt IS NULL')
+        .getOneOrFail();
+      isOk = false;
+    } catch (err) {
+      if (!isOk) throw new UnauthorizedException('Duplicated Id');
+      const novelUser = await this.usersRepository.save(
+        this.usersRepository.create({
+          id,
+          password: md5(password),
+        }),
+      );
+      return this.login(novelUser);
+    }
   }
 
   async withdrawal(id: string) {
