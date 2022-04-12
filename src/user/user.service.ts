@@ -63,7 +63,7 @@ export class UserService {
           password: md5(password),
         }),
       );
-      return this.login(novelUser);
+      return novelUser;
     }
   }
 
