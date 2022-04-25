@@ -2,6 +2,8 @@ import { ToDos } from './../to-do-list/entities/todo.list.entity';
 import { Users } from './../user/entities/user.entitiy';
 import { LoginDto } from './dto/login.dto';
 import {
+  ConflictException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -34,10 +36,10 @@ export class UserService {
         select: ['password'],
       });
     } catch (err) {
-      throw new UnauthorizedException('Wrong Id');
+      throw new UnauthorizedException('존재하지 않는 아이디입니다.');
     }
     if (md5(password) !== user.password)
-      throw new UnauthorizedException('Wrong Password');
+      throw new ForbiddenException('잘못된 비밀번호입니다.');
     const accessToken = jwt.sign({ id }, this.MY_SECRET_KEY, {
       expiresIn: '24h',
     });
@@ -52,11 +54,10 @@ export class UserService {
         .createQueryBuilder()
         .select('id')
         .where('id = :id', { id })
-        .andWhere('deletedAt IS NULL')
         .getOneOrFail();
       isOk = false;
     } catch (err) {
-      if (!isOk) throw new UnauthorizedException('Duplicated Id');
+      if (!isOk) throw new ConflictException('중복된 아이디입니다.');
       const novelUser = await this.usersRepository.save(
         this.usersRepository.create({
           id,
