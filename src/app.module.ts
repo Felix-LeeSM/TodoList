@@ -31,7 +31,6 @@ import { ChatModule } from './chat/chat.module';
           password: configService.get('DB_PASSWORD'),
           database: configService.get('DB_DATABASE'),
           entities: [Users, ToDos],
-          synchronize: true,
         };
       },
     }),
