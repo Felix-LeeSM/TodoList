@@ -10,6 +10,7 @@ import { ToDos } from './to-do-list/entities/todo.list.entity';
 import { AuthModule } from './auth/auth.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './logging.interceptor';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { LoggingInterceptor } from './logging.interceptor';
         };
       },
     }),
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [

@@ -183,20 +183,22 @@ export class ToDoListService {
     let prep: ToDos;
     let next: ToDos;
     try {
-      prep = await this.toDosRepository.findOneOrFail({
-        where: {
-          sequence: From,
-          userId,
-        },
-        select: ['id', 'sequence'],
-      });
-      next = await this.toDosRepository.findOneOrFail({
-        where: {
-          sequence: To,
-          userId,
-        },
-        select: ['sequence'],
-      });
+      [prep, next] = await Promise.all([
+        this.toDosRepository.findOneOrFail({
+          where: {
+            sequence: From,
+            userId,
+          },
+          select: ['id', 'sequence'],
+        }),
+        this.toDosRepository.findOneOrFail({
+          where: {
+            sequence: To,
+            userId,
+          },
+          select: ['sequence'],
+        }),
+      ]);
       [from, to] = [prep.sequence, next.sequence];
       if (from === to) return await this.findAllToDo(userId);
     } catch (err) {

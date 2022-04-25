@@ -1,3 +1,10 @@
 {
-  "cSpell.words": ["entitiy", "nestjs", "signin", "tinyint", "typeorm"]
+  "cSpell.words": [
+    "entitiy",
+    "nestjs",
+    "signin",
+    "tinyint",
+    "typeorm",
+    "websockets"
+  ]
 }
