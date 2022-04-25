@@ -8,6 +8,8 @@ import {
   ValidationPipe,
   UseGuards,
   Req,
+  Param,
+  Get,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -28,6 +30,12 @@ export class UserController {
   @ApiOperation({ summary: '로그인' })
   login(@Body() loginDto: LoginDto) {
     return this.userService.login(loginDto);
+  }
+
+  @Get('check/:id')
+  @ApiOperation({ summary: '아이디 중복 체크' })
+  duplicationCheck(@Param('id') id: string) {
+    return this.userService.duplicationCheck(id);
   }
 
   @UseGuards(authGuard)

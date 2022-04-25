@@ -87,4 +87,16 @@ export class UserService {
     if (isError) throw new InternalServerErrorException('Please Try Again');
     return result;
   }
+
+  async duplicationCheck(id: string) {
+    try {
+      await this.usersRepository.findOneOrFail({
+        where: { id },
+        select: ['id'],
+      });
+      return false;
+    } catch (err) {
+      return true;
+    }
+  }
 }
