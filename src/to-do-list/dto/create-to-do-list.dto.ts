@@ -32,6 +32,15 @@ export class CreateToDoListDto {
   @IsOptional()
   @IsDate()
   @ApiProperty({
+    name: 'startsAt',
+    type: 'Date',
+    description: '시작시간',
+  })
+  startsAt: Date;
+
+  @IsOptional()
+  @IsDate()
+  @ApiProperty({
     name: 'deadline',
     type: 'Date',
     description: '칸반 deadline',

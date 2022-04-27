@@ -26,4 +26,14 @@ export class CreateUserDto {
     description: '유저 password',
   })
   password: string;
+
+  @IsString()
+  @IsAlphanumeric()
+  @MinLength(3)
+  @MaxLength(20)
+  @ApiProperty({
+    example: 'asdf',
+    description: '유저 confirmPassword',
+  })
+  confirmPassword: string;
 }

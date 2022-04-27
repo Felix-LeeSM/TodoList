@@ -100,22 +100,7 @@ export class ToDoListService {
 
   async changeContent(userId: string, id: number, content: string) {
     try {
-      const toDo = await this.toDosRepository.findOneOrFail({
-        where: {
-          id,
-          userId,
-          deletedAt: null,
-        },
-        select: [
-          'id',
-          'userId',
-          'content',
-          'isComplete',
-          'category',
-          'sequence',
-          'deadline',
-        ],
-      });
+      const toDo = await this.findTodo({ id, userId });
       toDo.content = content;
       const novelToDo = await this.toDosRepository.save(toDo);
       return novelToDo;
@@ -126,22 +111,7 @@ export class ToDoListService {
 
   async changeDeadline(userId: string, id: number, deadline: Date) {
     try {
-      const toDo = await this.toDosRepository.findOneOrFail({
-        where: {
-          id,
-          userId,
-          deletedAt: null,
-        },
-        select: [
-          'id',
-          'userId',
-          'content',
-          'isComplete',
-          'category',
-          'sequence',
-          'deadline',
-        ],
-      });
+      const toDo = await this.findTodo({ id, userId });
       toDo.deadline = deadline;
       await this.toDosRepository.save(toDo);
       return toDo;
@@ -152,22 +122,7 @@ export class ToDoListService {
 
   async completeOne(userId: string, id: number, isComplete: number) {
     try {
-      const toDo = await this.toDosRepository.findOneOrFail({
-        where: {
-          id,
-          userId,
-          deletedAt: null,
-        },
-        select: [
-          'id',
-          'userId',
-          'content',
-          'isComplete',
-          'category',
-          'sequence',
-          'deadline',
-        ],
-      });
+      const toDo = await this.findTodo({ id, userId });
       if (toDo.isComplete === isComplete) return toDo;
       toDo.isComplete = isComplete;
       const result = await this.toDosRepository.save(toDo);
@@ -241,5 +196,25 @@ export class ToDoListService {
       await queryRunner.release();
       throw new InternalServerErrorException('Please Try Again');
     }
+  }
+
+  async findTodo({ id, userId }) {
+    return await this.toDosRepository.findOneOrFail({
+      where: {
+        id,
+        userId,
+        deletedAt: null,
+      },
+      select: [
+        'id',
+        'userId',
+        'content',
+        'isComplete',
+        'category',
+        'sequence',
+        'deadline',
+        'startsAt',
+      ],
+    });
   }
 }

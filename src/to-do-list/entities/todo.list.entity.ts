@@ -104,6 +104,18 @@ export class ToDos {
   })
   deadline: Date;
 
+  @ApiProperty({
+    name: 'startsAt',
+    nullable: false,
+    type: 'Date',
+    description: '칸반의 시작 날짜',
+  })
+  @Column('timestamp', {
+    name: 'startsAt',
+    nullable: false,
+  })
+  startsAt: Date;
+
   @CreateDateColumn({
     name: 'createdAt',
   })

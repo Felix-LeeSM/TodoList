@@ -2,6 +2,7 @@ import { ToDos } from './../to-do-list/entities/todo.list.entity';
 import { Users } from './../user/entities/user.entitiy';
 import { LoginDto } from './dto/login.dto';
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -47,7 +48,11 @@ export class UserService {
   }
 
   async register(createUserDto: CreateUserDto) {
-    const { id, password } = createUserDto;
+    const { id, password, confirmPassword } = createUserDto;
+    if (password !== confirmPassword)
+      throw new BadRequestException(
+        '비밀번호와 비밀번호 확인 문자가 일치하지 않습니다.',
+      );
     let isOk = true;
     try {
       await this.usersRepository
